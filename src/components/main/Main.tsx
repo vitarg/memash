@@ -22,7 +22,6 @@ function Main() {
 
     const handleFillGreen = () => {
         if (context) {
-            console.log(getRandomColor());
             context.fillStyle = getRandomColor();
             context.fillRect(0, 0, 500, 500);
         }
