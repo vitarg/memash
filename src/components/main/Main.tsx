@@ -28,16 +28,20 @@ function Main() {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <button onClick={handleFillGreen}>fill</button>
-
+        <div style={{display: 'flex', gap: 16}}>
             <canvas
                 ref={canvasRef}
-                style={{ background: '#fff' }}
+                style={{background: '#fff'}}
                 id="myCanvas"
                 width="500"
                 height="500"
             />
+
+            <div style={{ display: "flex", flexDirection: 'column' }}>
+                <button onClick={handleFillGreen}>
+                    Random Color
+                </button>
+            </div>
         </div>
     );
 }
