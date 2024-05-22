@@ -4,7 +4,9 @@ import Main from './components/main/Main.tsx';
 function App() {
     return (
         <>
-            <h1>Memash</h1>
+            <header>
+                <h1>Memash</h1>
+            </header>
 
             <Main />
         </>
