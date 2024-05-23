@@ -1,16 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-
-const getRandomNumber = (from: number, to: number) => {
-    return Math.floor(Math.random() * to) + from;
-};
-
-const getRandomColor = () => {
-    const red = getRandomNumber(0, 256);
-    const green = getRandomNumber(0, 256);
-    const blue = getRandomNumber(0, 256);
-
-    return `rgb(${red}, ${green}, ${blue})`;
-};
+import { getRandomColor } from '../../helpers.ts';
 
 function Main() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -73,10 +62,6 @@ function Main() {
         }
     };
 
-    if (image) {
-        drawImageOnCanvas();
-    }
-
     const handleFillGreen = () => {
         if (context) {
             context.fillStyle = getRandomColor();
@@ -87,6 +72,10 @@ function Main() {
     useEffect(() => {
         setContext(canvasRef.current?.getContext('2d'));
     }, []);
+
+    if (image) {
+        drawImageOnCanvas();
+    }
 
     return (
         <div
