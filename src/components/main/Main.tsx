@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getRandomColor } from '../../helpers.ts';
+import AddText from '../add-text';
+
+const MAX_WIDTH = 500;
+const MAX_HEIGHT = 500;
 
 function Main() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -19,6 +23,18 @@ function Main() {
         }
     };
 
+    const handleAddText = (text: string) => {
+        if (context) {
+            context.font = 'bold 30px Arial';
+            context.fillStyle = 'white';
+            context.textBaseline = 'top'; // Установка базовой линии текста
+            context.fillText(text, 40, 40, MAX_WIDTH - 16);
+            context.strokeStyle = 'black';
+            context.lineWidth = 1;
+            context.strokeText(text, 40, 40);
+        }
+    };
+
     const drawImageOnCanvas = () => {
         if (image) {
             const canvas = canvasRef.current;
@@ -29,8 +45,6 @@ function Main() {
             }
 
             img.onload = () => {
-                const MAX_WIDTH = 500;
-                const MAX_HEIGHT = 500;
                 let width = img.width;
                 let height = img.height;
 
@@ -95,7 +109,7 @@ function Main() {
                 height="500"
             />
 
-            <div style={{ display: 'flex', flexDirection: 'column', height: 500, gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 500, gap: 16 }}>
                 <button onClick={handleFillGreen}>Random Color</button>
                 <div>
                     <label htmlFor="picture">Upload picture</label>
@@ -106,6 +120,8 @@ function Main() {
                         aria-label="Upload picture"
                     />
                 </div>
+
+                <AddText onSubmit={handleAddText} />
             </div>
         </div>
     );
