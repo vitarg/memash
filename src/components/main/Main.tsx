@@ -83,6 +83,12 @@ function Main() {
         }
     };
 
+    const handleClear = () => {
+        if (context) {
+            context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT)
+        }
+    }
+
     useEffect(() => {
         setContext(canvasRef.current?.getContext('2d'));
     }, []);
@@ -122,6 +128,8 @@ function Main() {
                 </div>
 
                 <AddText onSubmit={handleAddText} />
+
+                <button onClick={handleClear}>Clear </button>
             </div>
         </div>
     );
