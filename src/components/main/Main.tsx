@@ -85,9 +85,23 @@ function Main() {
 
     const handleClear = () => {
         if (context) {
-            context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT)
+            context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
         }
-    }
+    };
+
+    const handleDownloadImage = () => {
+        const canvas = canvasRef.current;
+
+        if (canvas) {
+            const imageURI = canvas.toDataURL('image/jpeg');
+            const link = document.createElement('a');
+            link.href = imageURI;
+            link.download = 'image.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
 
     useEffect(() => {
         setContext(canvasRef.current?.getContext('2d'));
@@ -129,7 +143,9 @@ function Main() {
 
                 <AddText onSubmit={handleAddText} />
 
-                <button onClick={handleClear}>Clear </button>
+                <button onClick={handleClear}>Clear</button>
+
+                <button onClick={handleDownloadImage}>Download</button>
             </div>
         </div>
     );
