@@ -76,7 +76,7 @@ function Main() {
         }
     };
 
-    const handleFillGreen = () => {
+    const handleFill = () => {
         if (context) {
             context.fillStyle = getRandomColor();
             context.fillRect(0, 0, 500, 500);
@@ -110,7 +110,7 @@ function Main() {
             />
 
             <div style={{ display: 'flex', flexDirection: 'column', height: 500, gap: 16 }}>
-                <button onClick={handleFillGreen}>Random Color</button>
+                <button onClick={handleFill}>Random Color</button>
                 <div>
                     <label htmlFor="picture">Upload picture</label>
                     <input
