@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getRandomColor } from '../../helpers.ts';
 import AddText from '../add-text';
-import Upload from "../upload";
+import Upload from '../upload';
 
 const MAX_WIDTH = 500;
 const MAX_HEIGHT = 500;
@@ -135,7 +135,15 @@ function Main() {
                 height="500"
             />
 
-            <div style={{ display: 'flex', flexDirection: 'column', height: 500, gap: 16 }}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 500,
+                    width: 360,
+                    gap: 16,
+                }}
+            >
                 <button onClick={handleFill}>Random Color</button>
 
                 <Upload onChange={handleChangePicture} />
