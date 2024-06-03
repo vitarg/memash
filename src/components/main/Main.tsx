@@ -23,15 +23,20 @@ function Main() {
         }
     };
 
-    const handleAddText = (text: string) => {
+    const handleAddText = (text: string, position: 'top' | 'bottom') => {
+        const textCoords = {
+            top: { x: 40, y: 40 },
+            bottom: { x: 40, y: MAX_HEIGHT - 40 - 30 },
+        };
+
         if (context) {
             context.font = 'bold 30px Arial';
             context.fillStyle = 'white';
             context.textBaseline = 'top'; // Установка базовой линии текста
-            context.fillText(text, 40, 40, MAX_WIDTH - 16);
+            context.fillText(text, textCoords[position].x, textCoords[position].y, MAX_WIDTH - 16);
             context.strokeStyle = 'black';
             context.lineWidth = 1;
-            context.strokeText(text, 40, 40);
+            context.strokeText(text, textCoords[position].x, textCoords[position].y);
         }
     };
 
@@ -141,7 +146,9 @@ function Main() {
                     />
                 </div>
 
-                <AddText onSubmit={handleAddText} />
+                <AddText onSubmit={handleAddText} position="top" />
+
+                <AddText onSubmit={handleAddText} position="bottom" />
 
                 <button onClick={handleClear}>Clear</button>
 
