@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getRandomColor } from '../../helpers.ts';
-import AddText from '../add-text';
-import Upload from '../upload';
-
-const MAX_WIDTH = 500;
-const MAX_HEIGHT = 500;
+import AddText from '@components/add-text';
+import Upload from '@components/upload';
+import { getRandomColor } from '@shared/lib/color';
+import { MAX_CANVAS_HEIGHT, MAX_CANVAS_WIDTH } from '@shared/constants/canvas-constants';
 
 function Main() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -27,14 +25,14 @@ function Main() {
     const handleAddText = (text: string, position: 'top' | 'bottom') => {
         const textCoords = {
             top: { x: 40, y: 40 },
-            bottom: { x: 40, y: MAX_HEIGHT - 40 - 30 },
+            bottom: { x: 40, y: MAX_CANVAS_HEIGHT - 40 - 30 },
         };
 
         if (context) {
             context.font = 'bold 30px Arial';
             context.fillStyle = 'white';
             context.textBaseline = 'top'; // Установка базовой линии текста
-            context.fillText(text, textCoords[position].x, textCoords[position].y, MAX_WIDTH - 16);
+            context.fillText(text, textCoords[position].x, textCoords[position].y, MAX_CANVAS_WIDTH - 16);
             context.strokeStyle = 'black';
             context.lineWidth = 1;
             context.strokeText(text, textCoords[position].x, textCoords[position].y);
@@ -54,24 +52,24 @@ function Main() {
                 let width = img.width;
                 let height = img.height;
 
-                if (img.width > MAX_WIDTH) {
-                    img.width = MAX_WIDTH;
+                if (img.width > MAX_CANVAS_WIDTH) {
+                    img.width = MAX_CANVAS_WIDTH;
                 }
 
-                if (img.height > MAX_HEIGHT) {
-                    img.height = MAX_HEIGHT;
+                if (img.height > MAX_CANVAS_HEIGHT) {
+                    img.height = MAX_CANVAS_HEIGHT;
                 }
 
                 // Сохраняем пропорции изображения
                 if (width > height) {
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
+                    if (width > MAX_CANVAS_WIDTH) {
+                        height *= MAX_CANVAS_WIDTH / width;
+                        width = MAX_CANVAS_WIDTH;
                     }
                 } else {
-                    if (height > MAX_HEIGHT) {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
+                    if (height > MAX_CANVAS_HEIGHT) {
+                        width *= MAX_CANVAS_HEIGHT / height;
+                        height = MAX_CANVAS_HEIGHT;
                     }
                 }
 
@@ -91,7 +89,7 @@ function Main() {
 
     const handleClear = () => {
         if (context) {
-            context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+            context.clearRect(0, 0, MAX_CANVAS_WIDTH, MAX_CANVAS_WIDTH);
         }
     };
 

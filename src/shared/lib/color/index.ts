@@ -1,6 +1,4 @@
-export const getRandomNumber = (from: number, to: number) => {
-    return Math.floor(Math.random() * to) + from;
-};
+import { getRandomNumber } from '../math';
 
 export const getRandomColor = () => {
     const red = getRandomNumber(0, 256);
