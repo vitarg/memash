@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 interface AddTextProps {
     onSubmit: (text: string, position: 'top' | 'bottom') => void;
-    position: 'top' | 'bottom'
+    position: 'top' | 'bottom';
 }
 
 function AddText({ onSubmit, position }: AddTextProps) {
