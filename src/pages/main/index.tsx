@@ -10,13 +10,26 @@ function Main() {
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     const [context, setContext] = useState<CanvasRenderingContext2D | null | undefined>(null);
-    const [image, setImage] = useState<string | ArrayBuffer | null>();
+    const [image, setImage] = useState<string | ArrayBuffer | null>(null);
     const [texts, setTexts] = useState<
         { id: number; text: string; x: number; y: number }[]
     >([]);
     const [dragging, setDragging] = useState<
         { index: number; offsetX: number; offsetY: number } | null
     >(null);
+
+    useEffect(() => {
+        const saved = localStorage.getItem('meme');
+        if (saved) {
+            const { image: savedImage, texts: savedTexts } = JSON.parse(saved);
+            if (savedImage) {
+                setImage(savedImage);
+            }
+            if (Array.isArray(savedTexts)) {
+                setTexts(savedTexts);
+            }
+        }
+    }, []);
 
     const handleChangePicture = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -94,6 +107,7 @@ function Main() {
             context.clearRect(0, 0, MAX_CANVAS_WIDTH, MAX_CANVAS_WIDTH);
         }
         setTexts([]);
+        setImage(null);
     };
 
     const handleDownloadImage = () => {
@@ -129,6 +143,14 @@ function Main() {
             document.body.removeChild(link);
         }
     };
+
+    useEffect(() => {
+        if (image || texts.length) {
+            localStorage.setItem('meme', JSON.stringify({ image, texts }));
+        } else {
+            localStorage.removeItem('meme');
+        }
+    }, [image, texts]);
 
     useEffect(() => {
         setContext(canvasRef.current?.getContext('2d'));
