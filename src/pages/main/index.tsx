@@ -3,6 +3,7 @@ import AddText from '@components/add-text';
 import Upload from '@components/upload';
 import { getRandomColor } from '@shared/lib/color';
 import { MAX_CANVAS_HEIGHT, MAX_CANVAS_WIDTH } from '@shared/constants/canvas-constants';
+import { FaPalette, FaTrash, FaDownload } from 'react-icons/fa';
 
 function Main() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -142,7 +143,9 @@ function Main() {
                     gap: 16,
                 }}
             >
-                <button onClick={handleFill}>Random Color</button>
+                <button onClick={handleFill}>
+                    <FaPalette /> Random Color
+                </button>
 
                 <Upload onChange={handleChangePicture} />
 
@@ -150,9 +153,13 @@ function Main() {
 
                 <AddText onSubmit={handleAddText} position="bottom" />
 
-                <button onClick={handleClear}>Clear</button>
+                <button onClick={handleClear}>
+                    <FaTrash /> Clear
+                </button>
 
-                <button onClick={handleDownloadImage}>Download</button>
+                <button onClick={handleDownloadImage}>
+                    <FaDownload /> Download
+                </button>
             </div>
         </div>
     );
