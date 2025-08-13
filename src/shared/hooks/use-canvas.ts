@@ -43,7 +43,6 @@ export default function useCanvas({
 
         if (typeof image === 'string') {
             const img = new Image();
-            img.src = image;
             img.onload = () => {
                 let width = img.width;
                 let height = img.height;
@@ -66,6 +65,7 @@ export default function useCanvas({
                 context.clearRect(0, 0, width, height);
                 context.drawImage(img, 0, 0, width, height);
             };
+            img.src = image;
         } else {
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
