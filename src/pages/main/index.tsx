@@ -17,6 +17,8 @@ function Main() {
     const [dragging, setDragging] = useState<
         { index: number; offsetX: number; offsetY: number } | null
     >(null);
+    const [canvasWidth, setCanvasWidth] = useState(MAX_CANVAS_WIDTH);
+    const [canvasHeight, setCanvasHeight] = useState(MAX_CANVAS_HEIGHT);
 
     const handleChangePicture = (file: File) => {
         const reader = new FileReader();
@@ -41,7 +43,7 @@ function Main() {
     const handleAddText = (text: string, position: 'top' | 'bottom') => {
         const textCoords = {
             top: { x: 40, y: 40 },
-            bottom: { x: 40, y: MAX_CANVAS_HEIGHT - 40 - 30 },
+            bottom: { x: 40, y: canvasHeight - 40 - 30 },
         };
 
         setTexts((prev) => [
@@ -93,13 +95,13 @@ function Main() {
     const handleFill = () => {
         if (context) {
             context.fillStyle = getRandomColor();
-            context.fillRect(0, 0, 500, 500);
+            context.fillRect(0, 0, canvasWidth, canvasHeight);
         }
     };
 
     const handleClear = () => {
         if (context) {
-            context.clearRect(0, 0, MAX_CANVAS_WIDTH, MAX_CANVAS_WIDTH);
+            context.clearRect(0, 0, canvasWidth, canvasHeight);
         }
         setTexts([]);
     };
@@ -108,18 +110,13 @@ function Main() {
         const canvas = canvasRef.current;
 
         if (canvas && context) {
-            const baseImage = context.getImageData(
-                0,
-                0,
-                MAX_CANVAS_WIDTH,
-                MAX_CANVAS_HEIGHT,
-            );
+            const baseImage = context.getImageData(0, 0, canvasWidth, canvasHeight);
 
             texts.forEach((t) => {
                 context.font = 'bold 30px Arial';
                 context.fillStyle = 'white';
                 context.textBaseline = 'top';
-                context.fillText(t.text, t.x, t.y, MAX_CANVAS_WIDTH - 16);
+                context.fillText(t.text, t.x, t.y, canvasWidth - 16);
                 context.strokeStyle = 'black';
                 context.lineWidth = 1;
                 context.strokeText(t.text, t.x, t.y);
@@ -151,28 +148,23 @@ function Main() {
             img.onload = () => {
                 let width = img.width;
                 let height = img.height;
+                const aspectRatio = width / height;
 
-                if (img.width > MAX_CANVAS_WIDTH) {
-                    img.width = MAX_CANVAS_WIDTH;
+                if (width > MAX_CANVAS_WIDTH) {
+                    width = MAX_CANVAS_WIDTH;
+                    height = width / aspectRatio;
                 }
 
-                if (img.height > MAX_CANVAS_HEIGHT) {
-                    img.height = MAX_CANVAS_HEIGHT;
-                }
-
-                if (width > height) {
-                    if (width > MAX_CANVAS_WIDTH) {
-                        height *= MAX_CANVAS_WIDTH / width;
-                        width = MAX_CANVAS_WIDTH;
-                    }
-                } else {
-                    if (height > MAX_CANVAS_HEIGHT) {
-                        width *= MAX_CANVAS_HEIGHT / height;
-                        height = MAX_CANVAS_HEIGHT;
-                    }
+                if (height > MAX_CANVAS_HEIGHT) {
+                    height = MAX_CANVAS_HEIGHT;
+                    width = height * aspectRatio;
                 }
 
                 if (canvas) {
+                    canvas.width = width;
+                    canvas.height = height;
+                    setCanvasWidth(width);
+                    setCanvasHeight(height);
                     context.drawImage(img, 0, 0, width, height);
                 }
             };
@@ -191,7 +183,7 @@ function Main() {
         >
             <div
                 ref={containerRef}
-                style={{ position: 'relative', width: 500, height: 500 }}
+                style={{ position: 'relative', width: canvasWidth, height: canvasHeight }}
                 onDrop={handleDropPicture}
                 onDragOver={handleDragOver}
             >
@@ -199,8 +191,8 @@ function Main() {
                     ref={canvasRef}
                     style={{ background: '#fff' }}
                     id="myCanvas"
-                    width="500"
-                    height="500"
+                    width={canvasWidth}
+                    height={canvasHeight}
                 />
 
                 {texts.map((t, index) => (
