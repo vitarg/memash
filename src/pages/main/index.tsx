@@ -26,7 +26,7 @@ function Main() {
     const [canvasWidth, setCanvasWidth] = useState(MAX_CANVAS_WIDTH);
     const [canvasHeight, setCanvasHeight] = useState(MAX_CANVAS_HEIGHT);
 
-    useEffect(() => {
+  useEffect(() => {
         const saved = localStorage.getItem('meme');
         if (saved) {
             const { image: savedImage, texts: savedTexts } = JSON.parse(saved);
@@ -47,17 +47,25 @@ function Main() {
         setRedoStack([]);
     };
 
-    const handleChangePicture = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    const handleChangePicture = (file: File) => {
+        pushToHistory();
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
 
+    const handleDropPicture = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files?.[0];
         if (file) {
-            pushToHistory();
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+            handleChangePicture(file);
         }
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
     };
 
     const handleAddText = (text: string, position: 'top' | 'bottom') => {
@@ -250,6 +258,8 @@ function Main() {
             <div
                 ref={containerRef}
                 style={{ position: 'relative', width: canvasWidth, height: canvasHeight }}
+                onDrop={handleDropPicture}
+                onDragOver={handleDragOver}
             >
                 <canvas
                     ref={canvasRef}
