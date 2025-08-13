@@ -11,13 +11,15 @@ function AddText({ onSubmit, position }: AddTextProps) {
 
     const handleSubmit = () => {
         if (inputValue.trim()) {
-            onSubmit(inputValue, position)
+            onSubmit(inputValue, position);
             setInputValue('');
         }
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+        <div
+            style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}
+        >
             <input
                 style={{ width: '60%' }}
                 value={inputValue}
