@@ -14,12 +14,12 @@
 ## Работа локально
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Сборка проекта:
 
 ```bash
-npm run build
+pnpm build
 ```
