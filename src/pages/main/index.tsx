@@ -1,15 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AddText from '@components/add-text';
 import Upload from '@components/upload';
-import { getRandomColor } from '@shared/lib/color';
-import { MAX_CANVAS_HEIGHT, MAX_CANVAS_WIDTH } from '@shared/constants/canvas-constants';
 import { FaPalette, FaTrash, FaDownload, FaUndo, FaRedo } from 'react-icons/fa';
+import useCanvas from '@shared/hooks/use-canvas';
 
 function Main() {
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
 
-    const [context, setContext] = useState<CanvasRenderingContext2D | null | undefined>(null);
     const [image, setImage] = useState<string | ArrayBuffer | null>(null);
     const [texts, setTexts] = useState<
         { id: number; text: string; x: number; y: number }[]
@@ -23,10 +20,25 @@ function Main() {
     const [dragging, setDragging] = useState<
         { index: number; offsetX: number; offsetY: number } | null
     >(null);
-    const [canvasWidth, setCanvasWidth] = useState(MAX_CANVAS_WIDTH);
-    const [canvasHeight, setCanvasHeight] = useState(MAX_CANVAS_HEIGHT);
 
-  useEffect(() => {
+    const pushToHistory = () => {
+        setHistory((prev) => [
+            ...prev,
+            { image, texts: texts.map((t) => ({ ...t })) },
+        ]);
+        setRedoStack([]);
+    };
+
+    const {
+        canvasRef,
+        canvasWidth,
+        canvasHeight,
+        fillCanvas,
+        clearCanvas,
+        downloadImage,
+    } = useCanvas({ image, texts, setImage, pushToHistory });
+
+    useEffect(() => {
         const saved = localStorage.getItem('meme');
         if (saved) {
             const { image: savedImage, texts: savedTexts } = JSON.parse(saved);
@@ -38,14 +50,6 @@ function Main() {
             }
         }
     }, []);
-
-    const pushToHistory = () => {
-        setHistory((prev) => [
-            ...prev,
-            { image, texts: texts.map((t) => ({ ...t })) },
-        ]);
-        setRedoStack([]);
-    };
 
     const handleChangePicture = (file: File) => {
         pushToHistory();
@@ -123,21 +127,12 @@ function Main() {
 
 
     const handleFill = () => {
-        if (context && canvasRef.current) {
-            pushToHistory();
-            context.fillStyle = getRandomColor();
-            context.fillRect(0, 0, canvasWidth, canvasHeight);
-            setImage(canvasRef.current.toDataURL());
-        }
+        fillCanvas();
     };
 
     const handleClear = () => {
-        if (context) {
-            pushToHistory();
-            context.clearRect(0, 0, canvasWidth, canvasHeight);
-        }
+        clearCanvas();
         setTexts([]);
-        setImage(null);
     };
 
     const handleUndo = () => {
@@ -169,32 +164,7 @@ function Main() {
     };
 
     const handleDownloadImage = () => {
-        const canvas = canvasRef.current;
-
-        if (canvas && context) {
-            const baseImage = context.getImageData(0, 0, canvasWidth, canvasHeight);
-
-            texts.forEach((t) => {
-                context.font = 'bold 30px Arial';
-                context.fillStyle = 'white';
-                context.textBaseline = 'top';
-                context.fillText(t.text, t.x, t.y, canvasWidth - 16);
-                context.strokeStyle = 'black';
-                context.lineWidth = 1;
-                context.strokeText(t.text, t.x, t.y);
-            });
-
-            const imageURI = canvas.toDataURL('image/jpeg');
-
-            context.putImageData(baseImage, 0, 0);
-
-            const link = document.createElement('a');
-            link.href = imageURI;
-            link.download = 'image.jpg';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+        downloadImage();
     };
 
     useEffect(() => {
@@ -205,45 +175,6 @@ function Main() {
         }
     }, [image, texts]);
 
-    useEffect(() => {
-        setContext(canvasRef.current?.getContext('2d'));
-    }, []);
-
-    useEffect(() => {
-        if (!context) return;
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        if (typeof image === 'string') {
-            const img = new Image();
-            img.src = image;
-
-            img.onload = () => {
-                let width = img.width;
-                let height = img.height;
-                const aspectRatio = width / height;
-
-                if (width > MAX_CANVAS_WIDTH) {
-                    width = MAX_CANVAS_WIDTH;
-                    height = width / aspectRatio;
-                }
-
-                if (height > MAX_CANVAS_HEIGHT) {
-                    height = MAX_CANVAS_HEIGHT;
-                    width = height * aspectRatio;
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-                setCanvasWidth(width);
-                setCanvasHeight(height);
-                context.clearRect(0, 0, width, height);
-                context.drawImage(img, 0, 0, width, height);
-            };
-        } else {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        }
-    }, [image, context]);
 
     return (
         <div
