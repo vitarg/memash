@@ -3,7 +3,7 @@ import AddText from '@components/add-text';
 import Upload from '@components/upload';
 import { getRandomColor } from '@shared/lib/color';
 import { MAX_CANVAS_HEIGHT, MAX_CANVAS_WIDTH } from '@shared/constants/canvas-constants';
-import { FaPalette, FaTrash, FaDownload } from 'react-icons/fa';
+import { FaPalette, FaTrash, FaDownload, FaUndo, FaRedo } from 'react-icons/fa';
 
 function Main() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -13,6 +13,12 @@ function Main() {
     const [image, setImage] = useState<string | ArrayBuffer | null>(null);
     const [texts, setTexts] = useState<
         { id: number; text: string; x: number; y: number }[]
+    >([]);
+    const [history, setHistory] = useState<
+        { image: string | ArrayBuffer | null; texts: { id: number; text: string; x: number; y: number }[] }[]
+    >([]);
+    const [redoStack, setRedoStack] = useState<
+        { image: string | ArrayBuffer | null; texts: { id: number; text: string; x: number; y: number }[] }[]
     >([]);
     const [dragging, setDragging] = useState<
         { index: number; offsetX: number; offsetY: number } | null
@@ -33,7 +39,16 @@ function Main() {
         }
     }, []);
 
+    const pushToHistory = () => {
+        setHistory((prev) => [
+            ...prev,
+            { image, texts: texts.map((t) => ({ ...t })) },
+        ]);
+        setRedoStack([]);
+    };
+
     const handleChangePicture = (file: File) => {
+        pushToHistory();
         const reader = new FileReader();
         reader.onloadend = () => {
             setImage(reader.result);
@@ -59,6 +74,7 @@ function Main() {
             bottom: { x: 40, y: canvasHeight - 40 - 30 },
         };
 
+        pushToHistory();
         setTexts((prev) => [
             ...prev,
             {
@@ -73,6 +89,7 @@ function Main() {
     const handleMouseDown = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return;
+        pushToHistory();
         setDragging({
             index,
             offsetX: e.clientX - rect.left - texts[index].x,
@@ -106,18 +123,49 @@ function Main() {
 
 
     const handleFill = () => {
-        if (context) {
+        if (context && canvasRef.current) {
+            pushToHistory();
             context.fillStyle = getRandomColor();
             context.fillRect(0, 0, canvasWidth, canvasHeight);
+            setImage(canvasRef.current.toDataURL());
         }
     };
 
     const handleClear = () => {
         if (context) {
+            pushToHistory();
             context.clearRect(0, 0, canvasWidth, canvasHeight);
         }
         setTexts([]);
         setImage(null);
+    };
+
+    const handleUndo = () => {
+        setHistory((prev) => {
+            if (!prev.length) return prev;
+            const last = prev[prev.length - 1];
+            setRedoStack((r) => [
+                ...r,
+                { image, texts: texts.map((t) => ({ ...t })) },
+            ]);
+            setImage(last.image);
+            setTexts(last.texts);
+            return prev.slice(0, -1);
+        });
+    };
+
+    const handleRedo = () => {
+        setRedoStack((prev) => {
+            if (!prev.length) return prev;
+            const last = prev[prev.length - 1];
+            setHistory((h) => [
+                ...h,
+                { image, texts: texts.map((t) => ({ ...t })) },
+            ]);
+            setImage(last.image);
+            setTexts(last.texts);
+            return prev.slice(0, -1);
+        });
     };
 
     const handleDownloadImage = () => {
@@ -162,8 +210,11 @@ function Main() {
     }, []);
 
     useEffect(() => {
-        if (typeof image === 'string' && context) {
-            const canvas = canvasRef.current;
+        if (!context) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        if (typeof image === 'string') {
             const img = new Image();
             img.src = image;
 
@@ -182,14 +233,15 @@ function Main() {
                     width = height * aspectRatio;
                 }
 
-                if (canvas) {
-                    canvas.width = width;
-                    canvas.height = height;
-                    setCanvasWidth(width);
-                    setCanvasHeight(height);
-                    context.drawImage(img, 0, 0, width, height);
-                }
+                canvas.width = width;
+                canvas.height = height;
+                setCanvasWidth(width);
+                setCanvasHeight(height);
+                context.clearRect(0, 0, width, height);
+                context.drawImage(img, 0, 0, width, height);
             };
+        } else {
+            context.clearRect(0, 0, canvas.width, canvas.height);
         }
     }, [image, context]);
 
@@ -258,6 +310,14 @@ function Main() {
                 <AddText onSubmit={handleAddText} position="top" />
 
                 <AddText onSubmit={handleAddText} position="bottom" />
+
+                <button onClick={handleUndo} disabled={!history.length}>
+                    <FaUndo /> Undo
+                </button>
+
+                <button onClick={handleRedo} disabled={!redoStack.length}>
+                    <FaRedo /> Redo
+                </button>
 
                 <button onClick={handleClear}>
                     <FaTrash /> Clear
