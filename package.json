@@ -11,7 +11,7 @@
         "format": "prettier --check .",
         "format:fix": "prettier --write .",
         "typecheck": "tsc --noEmit",
-        "pre-commit": "npm run lint && npm run typecheck && npm run format"
+        "pre-commit": "pnpm lint && pnpm typecheck && pnpm format"
     },
     "dependencies": {
         "react": "^18.2.0",
@@ -31,5 +31,6 @@
         "prettier": "^3.2.5",
         "typescript": "^5.2.2",
         "vite": "^5.2.11"
-    }
+    },
+    "packageManager": "pnpm@9.0.0"
 }
