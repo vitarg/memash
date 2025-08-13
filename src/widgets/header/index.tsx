@@ -1,6 +1,8 @@
+import styles from './styles.module.css';
+
 function Header() {
     return (
-        <header style={{ paddingLeft: 16 }}>
+        <header className={styles.header}>
             <h1>Memash</h1>
         </header>
     );

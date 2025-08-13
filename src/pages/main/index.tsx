@@ -3,6 +3,7 @@ import AddText from '@components/add-text';
 import Upload from '@components/upload';
 import { FaPalette, FaTrash, FaDownload, FaUndo, FaRedo } from 'react-icons/fa';
 import useCanvas from '@shared/hooks/use-canvas';
+import styles from './styles.module.css';
 
 function Main() {
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -188,28 +189,17 @@ function Main() {
     }, [image, texts]);
 
     return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 16,
-            }}
-        >
+        <div className={styles.container}>
             <div
                 ref={containerRef}
-                style={{
-                    position: 'relative',
-                    width: canvasWidth,
-                    height: canvasHeight,
-                }}
+                className={styles.canvasContainer}
+                style={{ width: canvasWidth, height: canvasHeight }}
                 onDrop={handleDropPicture}
                 onDragOver={handleDragOver}
             >
                 <canvas
                     ref={canvasRef}
-                    style={{ background: '#fff' }}
+                    className={styles.canvas}
                     id="myCanvas"
                     width={canvasWidth}
                     height={canvasHeight}
@@ -219,34 +209,15 @@ function Main() {
                     <div
                         key={t.id}
                         onMouseDown={(e) => handleMouseDown(index, e)}
-                        style={{
-                            position: 'absolute',
-                            left: t.x,
-                            top: t.y,
-                            color: '#fff',
-                            fontWeight: 'bold',
-                            fontSize: 30,
-                            fontFamily: 'Arial',
-                            cursor: 'move',
-                            userSelect: 'none',
-                            textShadow:
-                                '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-                        }}
+                        className={styles.text}
+                        style={{ left: t.x, top: t.y }}
                     >
                         {t.text}
                     </div>
                 ))}
             </div>
 
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 500,
-                    width: 360,
-                    gap: 16,
-                }}
-            >
+            <div className={styles.sidebar}>
                 <button onClick={handleFill}>
                     <FaPalette /> Random Color
                 </button>

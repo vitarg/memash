@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
+import styles from './styles.module.css';
 
 interface AddTextProps {
     onSubmit: (text: string, position: 'top' | 'bottom') => void;
@@ -17,11 +18,9 @@ function AddText({ onSubmit, position }: AddTextProps) {
     };
 
     return (
-        <div
-            style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}
-        >
+        <div className={styles.container}>
             <input
-                style={{ width: '60%' }}
+                className={styles.input}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 type="text"
