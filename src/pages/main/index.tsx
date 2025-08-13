@@ -18,16 +18,24 @@ function Main() {
         { index: number; offsetX: number; offsetY: number } | null
     >(null);
 
-    const handleChangePicture = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    const handleChangePicture = (file: File) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
 
+    const handleDropPicture = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+            handleChangePicture(file);
         }
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
     };
 
     const handleAddText = (text: string, position: 'top' | 'bottom') => {
@@ -184,6 +192,8 @@ function Main() {
             <div
                 ref={containerRef}
                 style={{ position: 'relative', width: 500, height: 500 }}
+                onDrop={handleDropPicture}
+                onDragOver={handleDragOver}
             >
                 <canvas
                     ref={canvasRef}
