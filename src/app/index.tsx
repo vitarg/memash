@@ -1,16 +1,10 @@
 import Main from '../pages/main';
 import Header from '../widgets/header';
+import styles from './styles.module.css';
 
 function App() {
     return (
-        <main
-            style={{
-                width: '100%',
-                display: 'grid',
-                gridTemplateColumns: '1fr',
-                gridTemplateRows: 'min-content 1fr',
-            }}
-        >
+        <main className={styles.main}>
             <Header />
 
             <Main />
