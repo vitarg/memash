@@ -1,6 +1,9 @@
 import { useRef, useState, useEffect } from 'react';
 import { getRandomColor } from '@shared/lib/color';
-import { MAX_CANVAS_HEIGHT, MAX_CANVAS_WIDTH } from '@shared/constants/canvas-constants';
+import {
+    MAX_CANVAS_HEIGHT,
+    MAX_CANVAS_WIDTH,
+} from '@shared/constants/canvas-constants';
 
 interface TextItem {
     id: number;
@@ -23,7 +26,9 @@ export default function useCanvas({
     pushToHistory,
 }: UseCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+    const [context, setContext] = useState<CanvasRenderingContext2D | null>(
+        null,
+    );
     const [canvasWidth, setCanvasWidth] = useState(MAX_CANVAS_WIDTH);
     const [canvasHeight, setCanvasHeight] = useState(MAX_CANVAS_HEIGHT);
 
@@ -86,7 +91,12 @@ export default function useCanvas({
     const downloadImage = () => {
         const canvas = canvasRef.current;
         if (canvas && context) {
-            const baseImage = context.getImageData(0, 0, canvasWidth, canvasHeight);
+            const baseImage = context.getImageData(
+                0,
+                0,
+                canvasWidth,
+                canvasHeight,
+            );
 
             texts.forEach((t) => {
                 context.font = 'bold 30px Arial';
@@ -119,4 +129,3 @@ export default function useCanvas({
         downloadImage,
     };
 }
-

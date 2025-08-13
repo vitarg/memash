@@ -25,9 +25,18 @@ function Upload({ onChange }: UploadProps) {
     };
 
     return (
-        <div className="file-input" onDrop={handleDrop} onDragOver={handleDragOver}>
+        <div
+            className="file-input"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+        >
             <label htmlFor="picture">Upload picture</label>
-            <input className="file" onChange={handleInputChange} type="file" id="picture" />
+            <input
+                className="file"
+                onChange={handleInputChange}
+                type="file"
+                id="picture"
+            />
         </div>
     );
 }

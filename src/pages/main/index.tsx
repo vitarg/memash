@@ -12,14 +12,22 @@ function Main() {
         { id: number; text: string; x: number; y: number }[]
     >([]);
     const [history, setHistory] = useState<
-        { image: string | ArrayBuffer | null; texts: { id: number; text: string; x: number; y: number }[] }[]
+        {
+            image: string | ArrayBuffer | null;
+            texts: { id: number; text: string; x: number; y: number }[];
+        }[]
     >([]);
     const [redoStack, setRedoStack] = useState<
-        { image: string | ArrayBuffer | null; texts: { id: number; text: string; x: number; y: number }[] }[]
+        {
+            image: string | ArrayBuffer | null;
+            texts: { id: number; text: string; x: number; y: number }[];
+        }[]
     >([]);
-    const [dragging, setDragging] = useState<
-        { index: number; offsetX: number; offsetY: number } | null
-    >(null);
+    const [dragging, setDragging] = useState<{
+        index: number;
+        offsetX: number;
+        offsetY: number;
+    } | null>(null);
 
     const pushToHistory = () => {
         setHistory((prev) => [
@@ -90,7 +98,10 @@ function Main() {
         ]);
     };
 
-    const handleMouseDown = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseDown = (
+        index: number,
+        e: React.MouseEvent<HTMLDivElement>,
+    ) => {
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return;
         pushToHistory();
@@ -109,7 +120,9 @@ function Main() {
                 const x = e.clientX - rect.left - dragging.offsetX;
                 const y = e.clientY - rect.top - dragging.offsetY;
                 setTexts((prev) =>
-                    prev.map((t, i) => (i === dragging.index ? { ...t, x, y } : t)),
+                    prev.map((t, i) =>
+                        i === dragging.index ? { ...t, x, y } : t,
+                    ),
                 );
             }
         };
@@ -124,7 +137,6 @@ function Main() {
             document.removeEventListener('mouseup', handleMouseUp);
         };
     }, [dragging]);
-
 
     const handleFill = () => {
         fillCanvas();
@@ -175,7 +187,6 @@ function Main() {
         }
     }, [image, texts]);
 
-
     return (
         <div
             style={{
@@ -188,7 +199,11 @@ function Main() {
         >
             <div
                 ref={containerRef}
-                style={{ position: 'relative', width: canvasWidth, height: canvasHeight }}
+                style={{
+                    position: 'relative',
+                    width: canvasWidth,
+                    height: canvasHeight,
+                }}
                 onDrop={handleDropPicture}
                 onDragOver={handleDragOver}
             >
