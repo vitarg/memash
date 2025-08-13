@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaPlus } from 'react-icons/fa';
 
 interface AddTextProps {
     onSubmit: (text: string, position: 'top' | 'bottom') => void;
@@ -24,7 +25,9 @@ function AddText({ onSubmit, position }: AddTextProps) {
                 type="text"
                 placeholder={position[0].toUpperCase() + position.slice(1)}
             />
-            <button onClick={handleSubmit}>Add text</button>
+            <button onClick={handleSubmit}>
+                <FaPlus /> Add text
+            </button>
         </div>
     );
 }
