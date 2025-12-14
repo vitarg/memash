@@ -1,18 +1,18 @@
 repos:
     - repo: local
       hooks:
-          - id: prettier
-            name: Prettier
-            entry: npm run format:fix
+          - id: biome-format
+            name: Biome Format
+            entry: pnpm format:fix
             language: system
             pass_filenames: false
-          - id: eslint
-            name: ESLint
-            entry: npm run lint
+          - id: biome-lint
+            name: Biome Lint
+            entry: pnpm lint
             language: system
             pass_filenames: false
           - id: typecheck
             name: Type Check
-            entry: npm run typecheck
+            entry: pnpm typecheck
             language: system
             pass_filenames: false

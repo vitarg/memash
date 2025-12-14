@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
 import AddText from '@components/add-text';
 import Upload from '@components/upload';
-import { FaPalette, FaTrash, FaDownload, FaUndo, FaRedo } from 'react-icons/fa';
 import useCanvas from '@shared/hooks/use-canvas';
+import { useEffect, useRef, useState } from 'react';
+import { FaDownload, FaPalette, FaRedo, FaTrash, FaUndo } from 'react-icons/fa';
 import styles from './styles.module.css';
 
 function Main() {
@@ -218,7 +218,7 @@ function Main() {
             </div>
 
             <div className={styles.sidebar}>
-                <button onClick={handleFill}>
+                <button type="button" onClick={handleFill}>
                     <FaPalette /> Random Color
                 </button>
 
@@ -228,19 +228,27 @@ function Main() {
 
                 <AddText onSubmit={handleAddText} position="bottom" />
 
-                <button onClick={handleUndo} disabled={!history.length}>
+                <button
+                    type="button"
+                    onClick={handleUndo}
+                    disabled={!history.length}
+                >
                     <FaUndo /> Undo
                 </button>
 
-                <button onClick={handleRedo} disabled={!redoStack.length}>
+                <button
+                    type="button"
+                    onClick={handleRedo}
+                    disabled={!redoStack.length}
+                >
                     <FaRedo /> Redo
                 </button>
 
-                <button onClick={handleClear}>
+                <button type="button" onClick={handleClear}>
                     <FaTrash /> Clear
                 </button>
 
-                <button onClick={handleDownloadImage}>
+                <button type="button" onClick={handleDownloadImage}>
                     <FaDownload /> Download
                 </button>
             </div>

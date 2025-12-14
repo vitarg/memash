@@ -1,9 +1,9 @@
-import { useRef, useState, useEffect } from 'react';
-import { getRandomColor } from '@shared/lib/color';
 import {
     MAX_CANVAS_HEIGHT,
     MAX_CANVAS_WIDTH,
 } from '@shared/constants/canvas-constants';
+import { getRandomColor } from '@shared/lib/color';
+import { useEffect, useRef, useState } from 'react';
 
 interface TextItem {
     id: number;
@@ -98,7 +98,7 @@ export default function useCanvas({
                 canvasHeight,
             );
 
-            texts.forEach((t) => {
+            for (const t of texts) {
                 context.font = 'bold 30px Arial';
                 context.fillStyle = 'white';
                 context.textBaseline = 'top';
@@ -106,7 +106,7 @@ export default function useCanvas({
                 context.strokeStyle = 'black';
                 context.lineWidth = 1;
                 context.strokeText(t.text, t.x, t.y);
-            });
+            }
 
             const imageURI = canvas.toDataURL('image/jpeg');
             context.putImageData(baseImage, 0, 0);
