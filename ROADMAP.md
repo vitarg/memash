@@ -14,6 +14,7 @@ This document outlines the planned features and improvements for Memash.
 - [ ] Add image filters (e.g., grayscale, sepia, invert)
 - [ ] Implement a layer system for text and images
 - [ ] Ability to reorder layers
+- [ ] Add dark theme
 
 ## v1.3: Meme Templates
 
