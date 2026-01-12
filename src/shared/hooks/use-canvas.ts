@@ -3,7 +3,7 @@ import {
     MAX_CANVAS_WIDTH,
 } from '@shared/constants/canvas-constants';
 import { getRandomColor } from '@shared/lib/color';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface TextItem {
     id: number;
@@ -37,7 +37,7 @@ export default function useCanvas({
     const [canvasWidth, setCanvasWidth] = useState(MAX_CANVAS_WIDTH);
     const [canvasHeight, setCanvasHeight] = useState(MAX_CANVAS_HEIGHT);
 
-    const drawTexts = () => {
+    const drawTexts = useCallback(() => {
         if (!context) return;
         for (const t of texts) {
             context.font = `bold ${t.fontSize || 30}px ${
@@ -52,7 +52,7 @@ export default function useCanvas({
             }
             context.fillText(t.text, t.x, t.y, canvasWidth);
         }
-    };
+    }, [canvasWidth, context, texts]);
 
     useEffect(() => {
         setContext(canvasRef.current?.getContext('2d') ?? null);
@@ -93,7 +93,7 @@ export default function useCanvas({
             context.clearRect(0, 0, canvas.width, canvas.height);
             drawTexts();
         }
-    }, [image, context, texts]);
+    }, [image, context, drawTexts]);
 
     const fillCanvas = () => {
         if (context && canvasRef.current) {

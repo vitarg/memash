@@ -45,7 +45,11 @@ function Upload({ onChange }: UploadProps) {
                 <p className="mb-4 text-xs text-muted-foreground">
                     Drag and drop an image here, or choose a file
                 </p>
-                <Button asChild variant="outline" className="w-full justify-center">
+                <Button
+                    asChild
+                    variant="outline"
+                    className="w-full justify-center"
+                >
                     <label htmlFor={inputId}>Select file</label>
                 </Button>
             </div>

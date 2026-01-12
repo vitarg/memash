@@ -27,7 +27,12 @@ function AddText({ onSubmit, position }: AddTextProps) {
                 type="text"
                 placeholder={position[0].toUpperCase() + position.slice(1)}
             />
-            <Button type="button" onClick={handleSubmit} size="sm" variant="secondary">
+            <Button
+                type="button"
+                onClick={handleSubmit}
+                size="sm"
+                variant="secondary"
+            >
                 <FaPlus /> Add text
             </Button>
         </div>
