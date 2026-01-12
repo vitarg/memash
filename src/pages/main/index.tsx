@@ -173,9 +173,7 @@ function Main() {
             const x = e.clientX - rect.left - dragging.offsetX;
             const y = e.clientY - rect.top - dragging.offsetY;
             setTexts((prev) =>
-                prev.map((t, i) =>
-                    i === dragging.index ? { ...t, x, y } : t,
-                ),
+                prev.map((t, i) => (i === dragging.index ? { ...t, x, y } : t)),
             );
         };
 
