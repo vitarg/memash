@@ -21,7 +21,12 @@ type TextItem = {
     strokeColor: string;
 };
 
-type Layer = { id: 'image'; type: 'image' } | { id: number; type: 'text' };
+type Layer =
+    | { id: 'image'; type: 'image'; visible: boolean }
+    | { id: number; type: 'text'; visible: boolean };
+type LayerInput =
+    | { id: 'image'; type: 'image'; visible?: boolean }
+    | { id: number; type: 'text'; visible?: boolean };
 
 const FILTERS = [
     { id: 'none', label: 'None', value: 'none' },
@@ -87,6 +92,11 @@ function Main() {
         setRedoStack([]);
     };
 
+    const normalizeLayer = (layer: LayerInput): Layer => ({
+        ...layer,
+        visible: layer.visible ?? true,
+    });
+
     useEffect(() => {
         setLayerOrder((prev) => {
             const next: Layer[] = [];
@@ -95,19 +105,19 @@ function Main() {
 
             for (const layer of prev) {
                 if (layer.type === 'image') {
-                    if (hasImage) next.push(layer);
+                    if (hasImage) next.push(normalizeLayer(layer));
                     continue;
                 }
-                if (textIds.has(layer.id)) next.push(layer);
+                if (textIds.has(layer.id)) next.push(normalizeLayer(layer));
             }
 
             if (hasImage && !next.some((layer) => layer.type === 'image')) {
-                next.unshift({ id: 'image', type: 'image' });
+                next.unshift({ id: 'image', type: 'image', visible: true });
             }
 
             for (const text of texts) {
                 if (!next.some((layer) => layer.id === text.id)) {
-                    next.push({ id: text.id, type: 'text' });
+                    next.push({ id: text.id, type: 'text', visible: true });
                 }
             }
 
@@ -115,9 +125,11 @@ function Main() {
         });
     }, [image, texts]);
 
+    const visibleLayerOrder = layerOrder.filter((layer) => layer.visible);
+
     const orderedTexts =
-        layerOrder.length > 0
-            ? layerOrder
+        visibleLayerOrder.length > 0
+            ? visibleLayerOrder
                   .filter((layer) => layer.type === 'text')
                   .map((layer) =>
                       texts.find((text) => text.id === layer.id),
@@ -126,7 +138,7 @@ function Main() {
             : texts;
 
     const layerIndexMap = new Map<string, number>();
-    layerOrder.forEach((layer, index) => {
+    visibleLayerOrder.forEach((layer, index) => {
         const key = layer.type === 'image' ? 'image' : `text-${layer.id}`;
         layerIndexMap.set(key, index);
     });
@@ -176,7 +188,11 @@ function Main() {
                 setImageFilter(savedFilter);
             }
             if (Array.isArray(savedLayers)) {
-                setLayerOrder(savedLayers);
+                setLayerOrder(
+                    savedLayers.map((layer: LayerInput) =>
+                        normalizeLayer(layer),
+                    ),
+                );
             }
         } catch {
             localStorage.removeItem('meme');
@@ -298,7 +314,7 @@ function Main() {
             setImage(last.image);
             setTexts(last.texts);
             setImageFilter(last.filter ?? 'none');
-            setLayerOrder(last.layers ?? []);
+            setLayerOrder((last.layers ?? []).map(normalizeLayer));
             return prev.slice(0, -1);
         });
     };
@@ -319,7 +335,7 @@ function Main() {
             setImage(last.image);
             setTexts(last.texts);
             setImageFilter(last.filter ?? 'none');
-            setLayerOrder(last.layers ?? []);
+            setLayerOrder((last.layers ?? []).map(normalizeLayer));
             return prev.slice(0, -1);
         });
     };
@@ -405,6 +421,17 @@ function Main() {
         if (value === imageFilter) return;
         pushToHistory();
         setImageFilter(value);
+    };
+
+    const toggleLayerVisibility = (layer: Layer) => {
+        pushToHistory();
+        setLayerOrder((prev) =>
+            prev.map((item) =>
+                item.type === layer.type && item.id === layer.id
+                    ? { ...item, visible: !item.visible }
+                    : item,
+            ),
+        );
     };
 
     const moveLayer = (index: number, direction: -1 | 1) => {
@@ -780,6 +807,21 @@ function Main() {
                                                 event.stopPropagation()
                                             }
                                         >
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    toggleLayerVisibility(layer)
+                                                }
+                                                aria-label={
+                                                    layer.visible
+                                                        ? 'Hide layer'
+                                                        : 'Show layer'
+                                                }
+                                            >
+                                                {layer.visible
+                                                    ? 'Hide'
+                                                    : 'Show'}
+                                            </button>
                                             <button
                                                 type="button"
                                                 onClick={() =>

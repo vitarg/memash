@@ -17,7 +17,9 @@ interface TextItem {
     strokeColor: string;
 }
 
-type Layer = { id: 'image'; type: 'image' } | { id: number; type: 'text' };
+type Layer =
+    | { id: 'image'; type: 'image'; visible: boolean }
+    | { id: number; type: 'text'; visible: boolean };
 
 interface UseCanvasProps {
     image: string | ArrayBuffer | null;
@@ -105,10 +107,12 @@ export default function useCanvas({
             }
 
             for (const layer of layerOrder) {
-                if (layer.type === 'image') {
-                    if (!img) continue;
-                    ctx.save();
-                    ctx.filter = imageFilter;
+            if (!layer.visible) continue;
+
+            if (layer.type === 'image') {
+                if (!img) continue;
+                ctx.save();
+                ctx.filter = imageFilter;
                     ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
                     ctx.restore();
                     continue;
@@ -191,6 +195,24 @@ export default function useCanvas({
         [maxCanvasSize.height, maxCanvasSize.width],
     );
 
+    const setupCanvas = useCallback(
+        (
+            canvas: HTMLCanvasElement,
+            ctx: CanvasRenderingContext2D,
+            width: number,
+            height: number,
+        ) => {
+            const scaledWidth = Math.round(width * devicePixelRatio);
+            const scaledHeight = Math.round(height * devicePixelRatio);
+            canvas.width = scaledWidth;
+            canvas.height = scaledHeight;
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+            ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        },
+        [devicePixelRatio],
+    );
+
     const applyImageSize = useCallback(
         (img: HTMLImageElement) => {
             const fittedSize = fitImageToBounds(img.width, img.height);
@@ -218,24 +240,6 @@ export default function useCanvas({
             fitImageToBounds,
             setupCanvas,
         ],
-    );
-
-    const setupCanvas = useCallback(
-        (
-            canvas: HTMLCanvasElement,
-            ctx: CanvasRenderingContext2D,
-            width: number,
-            height: number,
-        ) => {
-            const scaledWidth = Math.round(width * devicePixelRatio);
-            const scaledHeight = Math.round(height * devicePixelRatio);
-            canvas.width = scaledWidth;
-            canvas.height = scaledHeight;
-            canvas.style.width = `${width}px`;
-            canvas.style.height = `${height}px`;
-            ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-        },
-        [devicePixelRatio],
     );
 
     useEffect(() => {
