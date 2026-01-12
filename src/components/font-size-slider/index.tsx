@@ -3,11 +3,13 @@ import type { ChangeEvent } from 'react';
 interface FontSizeSliderProps {
     value: number;
     onChange: (value: number) => void;
+    onPointerDown?: () => void;
 }
 
 export default function FontSizeSlider({
     value,
     onChange,
+    onPointerDown,
 }: FontSizeSliderProps) {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         onChange(Number(e.target.value));
@@ -26,6 +28,7 @@ export default function FontSizeSlider({
                 max="100"
                 value={value}
                 onChange={handleChange}
+                onPointerDown={onPointerDown}
                 className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
         </div>

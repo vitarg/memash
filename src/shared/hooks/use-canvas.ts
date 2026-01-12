@@ -37,22 +37,29 @@ export default function useCanvas({
     const [canvasWidth, setCanvasWidth] = useState(MAX_CANVAS_WIDTH);
     const [canvasHeight, setCanvasHeight] = useState(MAX_CANVAS_HEIGHT);
 
+    const drawTextsOn = useCallback(
+        (ctx: CanvasRenderingContext2D) => {
+            for (const t of texts) {
+                ctx.font = `bold ${t.fontSize || 30}px ${
+                    t.fontFamily || 'Arial'
+                }`;
+                ctx.fillStyle = t.color || 'white';
+                ctx.textBaseline = 'top';
+                ctx.lineWidth = t.strokeWidth || 1;
+                ctx.strokeStyle = t.strokeColor || 'black';
+                if (t.strokeWidth > 0) {
+                    ctx.strokeText(t.text, t.x, t.y, canvasWidth);
+                }
+                ctx.fillText(t.text, t.x, t.y, canvasWidth);
+            }
+        },
+        [canvasWidth, texts],
+    );
+
     const drawTexts = useCallback(() => {
         if (!context) return;
-        for (const t of texts) {
-            context.font = `bold ${t.fontSize || 30}px ${
-                t.fontFamily || 'Arial'
-            }`;
-            context.fillStyle = t.color || 'white';
-            context.textBaseline = 'top';
-            context.lineWidth = t.strokeWidth || 1;
-            context.strokeStyle = t.strokeColor || 'black';
-            if (t.strokeWidth > 0) {
-                context.strokeText(t.text, t.x, t.y, canvasWidth);
-            }
-            context.fillText(t.text, t.x, t.y, canvasWidth);
-        }
-    }, [canvasWidth, context, texts]);
+        drawTextsOn(context);
+    }, [context, drawTextsOn]);
 
     useEffect(() => {
         setContext(canvasRef.current?.getContext('2d') ?? null);
@@ -113,27 +120,34 @@ export default function useCanvas({
     };
 
     const downloadImage = () => {
-        const canvas = canvasRef.current;
-        if (canvas && context) {
-            const baseImage = context.getImageData(
-                0,
-                0,
-                canvasWidth,
-                canvasHeight,
-            );
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = canvasWidth;
+        exportCanvas.height = canvasHeight;
+        const exportContext = exportCanvas.getContext('2d');
+        if (!exportContext) return;
 
-            drawTexts();
-
-            const imageURI = canvas.toDataURL('image/jpeg');
-            context.putImageData(baseImage, 0, 0);
-
+        const finalizeDownload = () => {
+            drawTextsOn(exportContext);
+            const imageURI = exportCanvas.toDataURL('image/jpeg');
             const link = document.createElement('a');
             link.href = imageURI;
             link.download = 'image.jpg';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        };
+
+        if (typeof image === 'string') {
+            const img = new Image();
+            img.onload = () => {
+                exportContext.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+                finalizeDownload();
+            };
+            img.src = image;
+            return;
         }
+
+        finalizeDownload();
     };
 
     return {

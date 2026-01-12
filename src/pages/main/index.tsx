@@ -62,6 +62,7 @@ function Main() {
         index: number;
         offsetX: number;
         offsetY: number;
+        pointerId: number;
     } | null>(null);
     const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
 
@@ -90,7 +91,8 @@ function Main() {
 
     useEffect(() => {
         const saved = localStorage.getItem('meme');
-        if (saved) {
+        if (!saved) return;
+        try {
             const { image: savedImage, texts: savedTexts } = JSON.parse(saved);
             if (savedImage) {
                 setImage(savedImage);
@@ -98,6 +100,8 @@ function Main() {
             if (Array.isArray(savedTexts)) {
                 setTexts(savedTexts);
             }
+        } catch {
+            localStorage.removeItem('meme');
         }
     }, []);
 
@@ -144,44 +148,50 @@ function Main() {
         setSelectedTextId(newText.id);
     };
 
-    const handleMouseDown = (
+    const handlePointerDown = (
         index: number,
-        e: React.MouseEvent<HTMLDivElement>,
+        e: React.PointerEvent<HTMLDivElement>,
     ) => {
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return;
+        e.preventDefault();
         pushToHistory();
         setDragging({
             index,
             offsetX: e.clientX - rect.left - texts[index].x,
             offsetY: e.clientY - rect.top - texts[index].y,
+            pointerId: e.pointerId,
         });
         setSelectedTextId(texts[index].id);
     };
 
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (dragging) {
-                const rect = containerRef.current?.getBoundingClientRect();
-                if (!rect) return;
-                const x = e.clientX - rect.left - dragging.offsetX;
-                const y = e.clientY - rect.top - dragging.offsetY;
-                setTexts((prev) =>
-                    prev.map((t, i) =>
-                        i === dragging.index ? { ...t, x, y } : t,
-                    ),
-                );
-            }
+        const handlePointerMove = (e: PointerEvent) => {
+            if (!dragging || e.pointerId !== dragging.pointerId) return;
+            const rect = containerRef.current?.getBoundingClientRect();
+            if (!rect) return;
+            const x = e.clientX - rect.left - dragging.offsetX;
+            const y = e.clientY - rect.top - dragging.offsetY;
+            setTexts((prev) =>
+                prev.map((t, i) =>
+                    i === dragging.index ? { ...t, x, y } : t,
+                ),
+            );
         };
 
-        const handleMouseUp = () => setDragging(null);
+        const handlePointerUp = (e: PointerEvent) => {
+            if (!dragging || e.pointerId !== dragging.pointerId) return;
+            setDragging(null);
+        };
 
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('pointermove', handlePointerMove);
+        window.addEventListener('pointerup', handlePointerUp);
+        window.addEventListener('pointercancel', handlePointerUp);
 
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('pointermove', handlePointerMove);
+            window.removeEventListener('pointerup', handlePointerUp);
+            window.removeEventListener('pointercancel', handlePointerUp);
         };
     }, [dragging]);
 
@@ -228,57 +238,75 @@ function Main() {
 
     const handleFontSizeChange = (value: number) => {
         setFontSize(value);
-        if (selectedTextId) {
-            setTexts((prev) =>
-                prev.map((t) =>
-                    t.id === selectedTextId ? { ...t, fontSize: value } : t,
-                ),
-            );
-        }
+        if (!selectedTextId) return;
+        const selectedText = texts.find((t) => t.id === selectedTextId);
+        if (!selectedText || selectedText.fontSize === value) return;
+        setTexts((prev) =>
+            prev.map((t) =>
+                t.id === selectedTextId ? { ...t, fontSize: value } : t,
+            ),
+        );
+    };
+
+    const handleFontSizePointerDown = () => {
+        if (!selectedTextId) return;
+        pushToHistory();
     };
 
     const handleColorChange = (value: string) => {
         setColor(value);
-        if (selectedTextId) {
-            setTexts((prev) =>
-                prev.map((t) =>
-                    t.id === selectedTextId ? { ...t, color: value } : t,
-                ),
-            );
-        }
+        if (!selectedTextId) return;
+        const selectedText = texts.find((t) => t.id === selectedTextId);
+        if (!selectedText || selectedText.color === value) return;
+        pushToHistory();
+        setTexts((prev) =>
+            prev.map((t) =>
+                t.id === selectedTextId ? { ...t, color: value } : t,
+            ),
+        );
     };
 
     const handleFontFamilyChange = (value: string) => {
         setFontFamily(value);
-        if (selectedTextId) {
-            setTexts((prev) =>
-                prev.map((t) =>
-                    t.id === selectedTextId ? { ...t, fontFamily: value } : t,
-                ),
-            );
-        }
+        if (!selectedTextId) return;
+        const selectedText = texts.find((t) => t.id === selectedTextId);
+        if (!selectedText || selectedText.fontFamily === value) return;
+        pushToHistory();
+        setTexts((prev) =>
+            prev.map((t) =>
+                t.id === selectedTextId ? { ...t, fontFamily: value } : t,
+            ),
+        );
     };
 
     const handleStrokeWidthChange = (value: number) => {
         setStrokeWidth(value);
-        if (selectedTextId) {
-            setTexts((prev) =>
-                prev.map((t) =>
-                    t.id === selectedTextId ? { ...t, strokeWidth: value } : t,
-                ),
-            );
-        }
+        if (!selectedTextId) return;
+        const selectedText = texts.find((t) => t.id === selectedTextId);
+        if (!selectedText || selectedText.strokeWidth === value) return;
+        setTexts((prev) =>
+            prev.map((t) =>
+                t.id === selectedTextId ? { ...t, strokeWidth: value } : t,
+            ),
+        );
+    };
+
+    const handleStrokeWidthPointerDown = () => {
+        if (!selectedTextId) return;
+        pushToHistory();
     };
 
     const handleStrokeColorChange = (value: string) => {
         setStrokeColor(value);
-        if (selectedTextId) {
-            setTexts((prev) =>
-                prev.map((t) =>
-                    t.id === selectedTextId ? { ...t, strokeColor: value } : t,
-                ),
-            );
-        }
+        if (!selectedTextId) return;
+        const selectedText = texts.find((t) => t.id === selectedTextId);
+        if (!selectedText || selectedText.strokeColor === value) return;
+        pushToHistory();
+        setTexts((prev) =>
+            prev.map((t) =>
+                t.id === selectedTextId ? { ...t, strokeColor: value } : t,
+            ),
+        );
     };
 
     useEffect(() => {
@@ -309,7 +337,7 @@ function Main() {
                 {texts.map((t, index) => (
                     <div
                         key={t.id}
-                        onMouseDown={(e) => handleMouseDown(index, e)}
+                        onPointerDown={(e) => handlePointerDown(index, e)}
                         className={`${styles.text} ${
                             selectedTextId === t.id ? styles.selected : ''
                         }`}
@@ -319,6 +347,7 @@ function Main() {
                             fontSize: `${t.fontSize}px`,
                             color: t.color,
                             fontFamily: t.fontFamily,
+                            touchAction: 'none',
                             textShadow: `
                                 -${t.strokeWidth}px -${t.strokeWidth}px 0 ${t.strokeColor},
                                 ${t.strokeWidth}px -${t.strokeWidth}px 0 ${t.strokeColor},
@@ -346,6 +375,7 @@ function Main() {
                 <FontSizeSlider
                     value={fontSize}
                     onChange={handleFontSizeChange}
+                    onPointerDown={handleFontSizePointerDown}
                 />
 
                 <ColorPicker
@@ -362,6 +392,7 @@ function Main() {
                 <StrokeWidthSlider
                     value={strokeWidth}
                     onChange={handleStrokeWidthChange}
+                    onPointerDown={handleStrokeWidthPointerDown}
                 />
 
                 <ColorPicker
