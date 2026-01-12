@@ -22,8 +22,10 @@
     font-family: Arial, sans-serif;
     cursor: move;
     user-select: none;
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0
-        #000;
+}
+
+.selected {
+    outline: 2px dashed #fff;
 }
 
 .sidebar {

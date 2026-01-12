@@ -23,6 +23,7 @@
         /* Алиасы */
         "baseUrl": ".",
         "paths": {
+            "@/*": ["src/*"],
             "@components/*": ["src/components/*"],
             "@shared/*": ["src/shared/*"]
         }

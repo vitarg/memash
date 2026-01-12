@@ -1,4 +1,9 @@
 import AddText from '@components/add-text';
+import ColorPicker from '@components/color-picker';
+import FontFamilySelector from '@components/font-family-selector';
+import FontSizeSlider from '@components/font-size-slider';
+import StrokeColorPicker from '@components/stroke-color-picker';
+import StrokeWidthSlider from '@components/stroke-width-slider';
 import Upload from '@components/upload';
 import useCanvas from '@shared/hooks/use-canvas';
 import { useEffect, useRef, useState } from 'react';
@@ -10,18 +15,48 @@ function Main() {
 
     const [image, setImage] = useState<string | ArrayBuffer | null>(null);
     const [texts, setTexts] = useState<
-        { id: number; text: string; x: number; y: number }[]
+        {
+            id: number;
+            text: string;
+            x: number;
+            y: number;
+            fontSize: number;
+            color: string;
+            fontFamily: string;
+            strokeWidth: number;
+            strokeColor: string;
+        }[]
     >([]);
     const [history, setHistory] = useState<
         {
             image: string | ArrayBuffer | null;
-            texts: { id: number; text: string; x: number; y: number }[];
+            texts: {
+                id: number;
+                text: string;
+                x: number;
+                y: number;
+                fontSize: number;
+                color: string;
+                fontFamily: string;
+                strokeWidth: number;
+                strokeColor: string;
+            }[];
         }[]
     >([]);
     const [redoStack, setRedoStack] = useState<
         {
             image: string | ArrayBuffer | null;
-            texts: { id: number; text: string; x: number; y: number }[];
+            texts: {
+                id: number;
+                text: string;
+                x: number;
+                y: number;
+                fontSize: number;
+                color: string;
+                fontFamily: string;
+                strokeWidth: number;
+                strokeColor: string;
+            }[];
         }[]
     >([]);
     const [dragging, setDragging] = useState<{
@@ -29,6 +64,13 @@ function Main() {
         offsetX: number;
         offsetY: number;
     } | null>(null);
+    const [selectedTextId, setSelectedTextId] = useState<number | null>(null);
+
+    const [fontSize, setFontSize] = useState(30);
+    const [color, setColor] = useState('#ffffff');
+    const [fontFamily, setFontFamily] = useState('Arial');
+    const [strokeWidth, setStrokeWidth] = useState(1);
+    const [strokeColor, setStrokeColor] = useState('#000000');
 
     const pushToHistory = () => {
         setHistory((prev) => [
@@ -88,15 +130,19 @@ function Main() {
         };
 
         pushToHistory();
-        setTexts((prev) => [
-            ...prev,
-            {
-                id: Date.now(),
-                text,
-                x: textCoords[position].x,
-                y: textCoords[position].y,
-            },
-        ]);
+        const newText = {
+            id: Date.now(),
+            text,
+            x: textCoords[position].x,
+            y: textCoords[position].y,
+            fontSize,
+            color,
+            fontFamily,
+            strokeWidth,
+            strokeColor,
+        };
+        setTexts((prev) => [...prev, newText]);
+        setSelectedTextId(newText.id);
     };
 
     const handleMouseDown = (
@@ -111,6 +157,7 @@ function Main() {
             offsetX: e.clientX - rect.left - texts[index].x,
             offsetY: e.clientY - rect.top - texts[index].y,
         });
+        setSelectedTextId(texts[index].id);
     };
 
     useEffect(() => {
@@ -180,6 +227,61 @@ function Main() {
         downloadImage();
     };
 
+    const handleFontSizeChange = (value: number) => {
+        setFontSize(value);
+        if (selectedTextId) {
+            setTexts((prev) =>
+                prev.map((t) =>
+                    t.id === selectedTextId ? { ...t, fontSize: value } : t,
+                ),
+            );
+        }
+    };
+
+    const handleColorChange = (value: string) => {
+        setColor(value);
+        if (selectedTextId) {
+            setTexts((prev) =>
+                prev.map((t) =>
+                    t.id === selectedTextId ? { ...t, color: value } : t,
+                ),
+            );
+        }
+    };
+
+    const handleFontFamilyChange = (value: string) => {
+        setFontFamily(value);
+        if (selectedTextId) {
+            setTexts((prev) =>
+                prev.map((t) =>
+                    t.id === selectedTextId ? { ...t, fontFamily: value } : t,
+                ),
+            );
+        }
+    };
+
+    const handleStrokeWidthChange = (value: number) => {
+        setStrokeWidth(value);
+        if (selectedTextId) {
+            setTexts((prev) =>
+                prev.map((t) =>
+                    t.id === selectedTextId ? { ...t, strokeWidth: value } : t,
+                ),
+            );
+        }
+    };
+
+    const handleStrokeColorChange = (value: string) => {
+        setStrokeColor(value);
+        if (selectedTextId) {
+            setTexts((prev) =>
+                prev.map((t) =>
+                    t.id === selectedTextId ? { ...t, strokeColor: value } : t,
+                ),
+            );
+        }
+    };
+
     useEffect(() => {
         if (image || texts.length) {
             localStorage.setItem('meme', JSON.stringify({ image, texts }));
@@ -209,8 +311,22 @@ function Main() {
                     <div
                         key={t.id}
                         onMouseDown={(e) => handleMouseDown(index, e)}
-                        className={styles.text}
-                        style={{ left: t.x, top: t.y }}
+                        className={`${styles.text} ${
+                            selectedTextId === t.id ? styles.selected : ''
+                        }`}
+                        style={{
+                            left: t.x,
+                            top: t.y,
+                            fontSize: `${t.fontSize}px`,
+                            color: t.color,
+                            fontFamily: t.fontFamily,
+                            textShadow: `
+                                -${t.strokeWidth}px -${t.strokeWidth}px 0 ${t.strokeColor},
+                                ${t.strokeWidth}px -${t.strokeWidth}px 0 ${t.strokeColor},
+                                -${t.strokeWidth}px ${t.strokeWidth}px 0 ${t.strokeColor},
+                                ${t.strokeWidth}px ${t.strokeWidth}px 0 ${t.strokeColor}
+                            `,
+                        }}
                     >
                         {t.text}
                     </div>
@@ -227,6 +343,28 @@ function Main() {
                 <AddText onSubmit={handleAddText} position="top" />
 
                 <AddText onSubmit={handleAddText} position="bottom" />
+
+                <FontSizeSlider
+                    value={fontSize}
+                    onChange={handleFontSizeChange}
+                />
+
+                <ColorPicker value={color} onChange={handleColorChange} />
+
+                <FontFamilySelector
+                    value={fontFamily}
+                    onChange={handleFontFamilyChange}
+                />
+
+                <StrokeWidthSlider
+                    value={strokeWidth}
+                    onChange={handleStrokeWidthChange}
+                />
+
+                <StrokeColorPicker
+                    value={strokeColor}
+                    onChange={handleStrokeColorChange}
+                />
 
                 <button
                     type="button"

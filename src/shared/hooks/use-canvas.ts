@@ -10,6 +10,11 @@ interface TextItem {
     text: string;
     x: number;
     y: number;
+    fontSize: number;
+    color: string;
+    fontFamily: string;
+    strokeWidth: number;
+    strokeColor: string;
 }
 
 interface UseCanvasProps {
@@ -31,6 +36,23 @@ export default function useCanvas({
     );
     const [canvasWidth, setCanvasWidth] = useState(MAX_CANVAS_WIDTH);
     const [canvasHeight, setCanvasHeight] = useState(MAX_CANVAS_HEIGHT);
+
+    const drawTexts = () => {
+        if (!context) return;
+        for (const t of texts) {
+            context.font = `bold ${t.fontSize || 30}px ${
+                t.fontFamily || 'Arial'
+            }`;
+            context.fillStyle = t.color || 'white';
+            context.textBaseline = 'top';
+            context.lineWidth = t.strokeWidth || 1;
+            context.strokeStyle = t.strokeColor || 'black';
+            if (t.strokeWidth > 0) {
+                context.strokeText(t.text, t.x, t.y, canvasWidth);
+            }
+            context.fillText(t.text, t.x, t.y, canvasWidth);
+        }
+    };
 
     useEffect(() => {
         setContext(canvasRef.current?.getContext('2d') ?? null);
@@ -64,12 +86,14 @@ export default function useCanvas({
                 setCanvasHeight(height);
                 context.clearRect(0, 0, width, height);
                 context.drawImage(img, 0, 0, width, height);
+                drawTexts();
             };
             img.src = image;
         } else {
             context.clearRect(0, 0, canvas.width, canvas.height);
+            drawTexts();
         }
-    }, [image, context]);
+    }, [image, context, texts]);
 
     const fillCanvas = () => {
         if (context && canvasRef.current) {
@@ -98,15 +122,7 @@ export default function useCanvas({
                 canvasHeight,
             );
 
-            for (const t of texts) {
-                context.font = 'bold 30px Arial';
-                context.fillStyle = 'white';
-                context.textBaseline = 'top';
-                context.fillText(t.text, t.x, t.y, canvasWidth - 16);
-                context.strokeStyle = 'black';
-                context.lineWidth = 1;
-                context.strokeText(t.text, t.x, t.y);
-            }
+            drawTexts();
 
             const imageURI = canvas.toDataURL('image/jpeg');
             context.putImageData(baseImage, 0, 0);

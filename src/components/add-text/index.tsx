@@ -1,6 +1,7 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
-import styles from './styles.module.css';
 
 interface AddTextProps {
     onSubmit: (text: string, position: 'top' | 'bottom') => void;
@@ -18,17 +19,17 @@ function AddText({ onSubmit, position }: AddTextProps) {
     };
 
     return (
-        <div className={styles.container}>
-            <input
-                className={styles.input}
+        <div className="flex items-center gap-2">
+            <Input
+                className="flex-1"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 type="text"
                 placeholder={position[0].toUpperCase() + position.slice(1)}
             />
-            <button type="button" onClick={handleSubmit}>
+            <Button type="button" onClick={handleSubmit} size="sm" variant="secondary">
                 <FaPlus /> Add text
-            </button>
+            </Button>
         </div>
     );
 }

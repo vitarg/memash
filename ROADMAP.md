@@ -4,10 +4,10 @@ This document outlines the planned features and improvements for Memash.
 
 ## v1.1: Text Customization
 
-- [ ] Change font size
-- [ ] Change font color
-- [ ] Change font family
-- [ ] Add text stroke and shadow
+- [x] Change font size
+- [x] Change font color
+- [x] Change font family
+- [x] Add text stroke and shadow
 
 ## v1.2: Image Filters & Layers
 
