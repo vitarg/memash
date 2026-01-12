@@ -5,7 +5,14 @@ interface FontFamilySelectorProps {
     onChange: (value: string) => void;
 }
 
-const fonts = ['Arial', 'Verdana', 'Times New Roman', 'Courier New', 'Georgia'];
+const fonts = [
+    'Anton',
+    'Arial',
+    'Verdana',
+    'Times New Roman',
+    'Courier New',
+    'Georgia',
+];
 
 export default function FontFamilySelector({
     value,

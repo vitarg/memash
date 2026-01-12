@@ -1,70 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
     :root {
-        --background: 0 0% 100%;
-        --foreground: 240 10% 3.9%;
+        --background: 34 45% 96%;
+        --foreground: 20 17% 18%;
 
-        --muted: 240 4.8% 95.9%;
-        --muted-foreground: 240 3.8% 46.1%;
+        --muted: 32 30% 92%;
+        --muted-foreground: 25 9% 40%;
 
-        --popover: 0 0% 100%;
-        --popover-foreground: 240 10% 3.9%;
+        --popover: 34 45% 96%;
+        --popover-foreground: 20 17% 18%;
 
-        --card: 0 0% 100%;
-        --card-foreground: 240 10% 3.9%;
+        --card: 32 38% 95%;
+        --card-foreground: 20 17% 18%;
 
-        --border: 240 5.9% 90%;
-        --input: 240 5.9% 90%;
+        --border: 28 20% 84%;
+        --input: 28 20% 84%;
 
-        --primary: 240 5.9% 10%;
-        --primary-foreground: 0 0% 98%;
+        --primary: 174 55% 24%;
+        --primary-foreground: 34 45% 96%;
 
-        --secondary: 240 4.8% 95.9%;
-        --secondary-foreground: 240 5.9% 10%;
+        --secondary: 32 32% 90%;
+        --secondary-foreground: 20 20% 18%;
 
-        --accent: 240 4.8% 95.9%;
-        --accent-foreground: 240 5.9% 10%;
+        --accent: 16 75% 54%;
+        --accent-foreground: 34 45% 96%;
 
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
+        --destructive: 2 74% 50%;
+        --destructive-foreground: 34 45% 96%;
 
-        --ring: 240 5% 64.9%;
+        --ring: 174 55% 24%;
 
-        --radius: 0.5rem;
+        --radius: 0.75rem;
+        --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        --font-display: system-ui, -apple-system, 'Segoe UI', sans-serif;
     }
 
     .dark {
-        --background: 240 10% 3.9%;
-        --foreground: 0 0% 98%;
+        --background: 204 18% 12%;
+        --foreground: 32 40% 96%;
 
-        --muted: 240 3.7% 15.9%;
-        --muted-foreground: 240 5% 64.9%;
+        --muted: 206 16% 18%;
+        --muted-foreground: 33 10% 70%;
 
-        --popover: 240 10% 3.9%;
-        --popover-foreground: 0 0% 98%;
+        --popover: 204 18% 12%;
+        --popover-foreground: 32 40% 96%;
 
-        --card: 240 10% 3.9%;
-        --card-foreground: 0 0% 98%;
+        --card: 204 18% 14%;
+        --card-foreground: 32 40% 96%;
 
-        --border: 240 3.7% 15.9%;
-        --input: 240 3.7% 15.9%;
+        --border: 204 15% 22%;
+        --input: 204 15% 22%;
 
-        --primary: 0 0% 98%;
-        --primary-foreground: 240 5.9% 10%;
+        --primary: 174 55% 40%;
+        --primary-foreground: 204 18% 12%;
 
-        --secondary: 240 3.7% 15.9%;
-        --secondary-foreground: 0 0% 98%;
+        --secondary: 204 18% 18%;
+        --secondary-foreground: 32 40% 96%;
 
-        --accent: 240 3.7% 15.9%;
-        --accent-foreground: 0 0% 98%;
+        --accent: 16 70% 52%;
+        --accent-foreground: 204 18% 12%;
 
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 85.7% 97.3%;
+        --destructive: 2 60% 42%;
+        --destructive-foreground: 32 40% 96%;
 
-        --ring: 240 4.9% 83.9%;
+        --ring: 174 55% 40%;
     }
 
     * {
@@ -75,7 +79,33 @@
         @apply bg-background text-foreground antialiased;
         margin: 0;
         min-height: 100vh;
-        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        font-family: var(--font-sans);
+        background-image: radial-gradient(
+                circle at 12% 8%,
+                hsl(var(--primary) / 0.12),
+                transparent 45%
+            ),
+            radial-gradient(
+                circle at 85% 0%,
+                hsl(var(--accent) / 0.18),
+                transparent 50%
+            ),
+            linear-gradient(180deg, #fbf6f0 0%, #f3eee6 100%);
+        background-attachment: fixed;
+    }
+
+    .dark body {
+        background-image: radial-gradient(
+                circle at 12% 8%,
+                hsl(var(--primary) / 0.18),
+                transparent 45%
+            ),
+            radial-gradient(
+                circle at 85% 0%,
+                hsl(var(--accent) / 0.18),
+                transparent 45%
+            ),
+            linear-gradient(180deg, #111a22 0%, #17222b 100%);
     }
 
     #root {

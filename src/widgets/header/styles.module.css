@@ -1,3 +1,86 @@
 .header {
-    padding-left: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logoMark {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    background: linear-gradient(
+        140deg,
+        hsl(var(--accent)) 0%,
+        hsl(var(--primary)) 100%
+    );
+    box-shadow: 0 10px 18px hsl(var(--accent) / 0.28);
+}
+
+.title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    letter-spacing: 0.02em;
+}
+
+.themeToggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+    color: hsl(var(--foreground));
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 10px 18px hsl(var(--foreground) / 0.1);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.themeToggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 22px hsl(var(--foreground) / 0.14);
+}
+
+.themeIcon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.themeDot {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: hsl(var(--accent));
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.themeDotDark {
+    background: hsl(var(--primary));
+    transform: translateX(6px);
+}
+
+@media (max-width: 800px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .brand {
+        width: 100%;
+    }
 }

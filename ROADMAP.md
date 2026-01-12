@@ -26,6 +26,8 @@ This document outlines the planned features and improvements for Memash.
 - [ ] Define visual theme (colors, typography, spacing)
 - [ ] UI/UX polish across app (layout, controls, states)
 - [ ] Improve accessibility and visual consistency
+- [ ] Localization (English, Russian, Chechen)
+- [ ] Canvas refactor (retina rendering, resize behavior, render performance, save debounce)
 
 ## v2.0: Backend Integration
 
