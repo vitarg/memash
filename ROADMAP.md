@@ -21,6 +21,12 @@ This document outlines the planned features and improvements for Memash.
 - [ ] Add a gallery of popular meme templates
 - [ ] Allow users to select a template and add their own text
 
+## v1.4: Visual Polish & Theme
+
+- [ ] Define visual theme (colors, typography, spacing)
+- [ ] UI/UX polish across app (layout, controls, states)
+- [ ] Improve accessibility and visual consistency
+
 ## v2.0: Backend Integration
 
 - [ ] User authentication
