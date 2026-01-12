@@ -2,7 +2,6 @@ import AddText from '@components/add-text';
 import ColorPicker from '@components/color-picker';
 import FontFamilySelector from '@components/font-family-selector';
 import FontSizeSlider from '@components/font-size-slider';
-import StrokeColorPicker from '@components/stroke-color-picker';
 import StrokeWidthSlider from '@components/stroke-width-slider';
 import Upload from '@components/upload';
 import useCanvas from '@shared/hooks/use-canvas';
@@ -349,7 +348,11 @@ function Main() {
                     onChange={handleFontSizeChange}
                 />
 
-                <ColorPicker value={color} onChange={handleColorChange} />
+                <ColorPicker
+                    value={color}
+                    onChange={handleColorChange}
+                    label="Font Color"
+                />
 
                 <FontFamilySelector
                     value={fontFamily}
@@ -361,9 +364,10 @@ function Main() {
                     onChange={handleStrokeWidthChange}
                 />
 
-                <StrokeColorPicker
+                <ColorPicker
                     value={strokeColor}
                     onChange={handleStrokeColorChange}
+                    label="Stroke Color"
                 />
 
                 <button

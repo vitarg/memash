@@ -14,8 +14,10 @@ export default function FontSizeSlider({
     };
 
     return (
-        <div>
-            <label htmlFor="font-size">Font Size</label>
+        <div className="grid gap-2">
+            <label htmlFor="font-size" className="text-sm font-medium">
+                Font Size: {value}px
+            </label>
             <input
                 type="range"
                 id="font-size"
@@ -24,6 +26,7 @@ export default function FontSizeSlider({
                 max="100"
                 value={value}
                 onChange={handleChange}
+                className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
         </div>
     );

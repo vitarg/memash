@@ -14,8 +14,10 @@ export default function StrokeWidthSlider({
     };
 
     return (
-        <div>
-            <label htmlFor="stroke-width">Stroke Width</label>
+        <div className="grid gap-2">
+            <label htmlFor="stroke-width" className="text-sm font-medium">
+                Stroke Width: {value}px
+            </label>
             <input
                 type="range"
                 id="stroke-width"
@@ -24,6 +26,7 @@ export default function StrokeWidthSlider({
                 max="10"
                 value={value}
                 onChange={handleChange}
+                className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
         </div>
     );
